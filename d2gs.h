@@ -1,37 +1,36 @@
 /*
  * Copyright (C) 2016 HE Yaowen <he.yaowen@hotmail.com>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PHP_D2GS_H
-#define PHP_D2GS_H
+#ifndef D2GS_H
+#define D2GS_H
 
-extern zend_module_entry d2gs_module_entry;
-#define phpext_d2gs_ptr &d2gs_module_entry
+#define D2GS_TIMEOUT_SEC 10
+#define D2GS_PORT 8888
 
-#define PHP_D2GS_VERSION "0.1.0"
+#include "php_network.h"
 
-#ifdef ZTS
-#include "TSRM.h"
-#endif
+typedef struct {
+    php_socket_t socket;
+    long timeout_sec;
+    char *buff;
+    int buff_len;
+} d2gs_state;
 
-PHP_MINIT_FUNCTION(d2gs);
-PHP_RINIT_FUNCTION(d2gs);
-PHP_MSHUTDOWN_FUNCTION(d2gs);
-PHP_RSHUTDOWN_FUNCTION(d2gs);
-PHP_MINFO_FUNCTION(d2gs);
+d2gs_state* d2gs_connect(const char *host, unsigned short port, long timeout_sec TSRMLS_DC);
 
-PHP_FUNCTION(d2gs_open);
+void d2gs_close(d2gs_state *state);
 
-#endif /* PHP_D2GS_H */
+#endif /* D2GS_H */
